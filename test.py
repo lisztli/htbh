@@ -9,7 +9,5 @@ if __name__ == '__main__':
     ilog, wlog, elog = hp.get_loggers()
     ilog('this is the log content', 'test_log')
     y = yles.yles()
-    #print y.go()
-    host, u, p = cfg.site_cl['wp_cfg']
-    hp.post_to_wp(host, u, p, 'title', 'content')
-    #print y.get_page('hahaha')
+    print y.go()
+

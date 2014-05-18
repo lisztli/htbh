@@ -9,6 +9,7 @@ import urllib
 import urllib2
 import hashlib
 import subprocess
+import json
 
 import leveldb
 
@@ -120,7 +121,6 @@ def save_loc(url, tgt):
     tgt_fd = os.path.dirname(local_file)
     if not os.path.exists(tgt_fd):
         os.makedirs(tgt_fd)
-    """
     succ = invoke_until_succ(lambda succ: True,
                              3,
                              #lambda u: urllib.urlretrieve(u, local_file),
@@ -128,7 +128,6 @@ def save_loc(url, tgt):
                                                     '-O', local_file]),
                              #get_remote,
                             url)
-    """
     succ = 1
     if succ < 0:
         return succ, cnt
@@ -143,7 +142,6 @@ def filter_history(url):
     """
     db = leveldb.LevelDB('%s/url_his' % cfg.app_leveldb_path)
     url = url[url.find('read'):]
-    return True
     try:
         db.Get(url)
         print 'gotcha', url
@@ -161,20 +159,17 @@ def post_to_wp(host, u, p, title, content):
     - `p`:
     - `title`:
     - `content`:
-    server = xmlrpclib.ServerProxy(host)
-    data = {'post_title': title,
-            'post_content': content}
-    print server.wp.newPost("0",
-                            u,
-                            p,
-                            data)
-    return ''
     """
+    if not content:
+        return ''
     wp = Client(host, u, p)
-    print host, u, p, title
     post = WordPressPost()
     post.title = title
     post.content = content
     #post.tags = tags
     #post.categories = cates
-    print wp.call(NewPost(post))
+    postid =  wp.call(NewPost(post))
+    ilog, _, _ = get_loggers()
+    ilog({'title': title,
+          'postid': postid},
+         'POST_SUCCESS')
