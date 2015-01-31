@@ -42,11 +42,12 @@ cliet每次请求，server都会返回一个json串，形如
 `打印机详情`是一个字典，例如：
 ```javascript
 {
-  "adv": "最经济的A3彩色多功能一体机",
+  "kicker": "世界上最快的",
+  "description": "秒速级打印机-一体机",
+  "model": "HP Officejet Pro X576dw",
+  "caption": "秒速级多功能一体机"
   "url": "http://www8.hp.com/cn/zh/products/printers/product-detail.html?oid=5153791&jumpid=reg_r1002_cnzh_c-001_title_r0002#!tab=features",
-  "model": "HP Officejet 7610",
   "img": "http://product-images.www8-hp.com/digmedialib/prodimg/lowres/c03670169.png",
-  "desc": "宽幅面数码云打印技术多功能一体机"
 }
 ```
 
@@ -54,11 +55,12 @@ cliet每次请求，server都会返回一个json串，形如
 
 |名称|类型|含义|是否允许为空|
 |----|:----:|:----:|----:|
-|adv| str | 宣传语 | N |
+|kicker| str |  | N |
 |url| str | 产品链接 | N |
 |model| str | 打印机型号 | N |
 |img| str | 打印机图片链接 | N |
-|desc| str | 打印机描述 | N |
+|description| str |  | N |
+|caption| str | | N |
 
 ## 提交「企业打印优享会」信息
 
