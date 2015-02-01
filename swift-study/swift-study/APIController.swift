@@ -30,7 +30,7 @@ class APIController {
         
         if let escapedSearchTerm = itunesSearchTerm.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
         {
-            let urlPath = "http://itunes.apple.com/search?term=\(escapedSearchTerm)&media=software"
+            let urlPath = "http://itunes.apple.com/search?term=\(escapedSearchTerm)&media=music&entity=album"
             let url = NSURL(string: urlPath)
             let session = NSURLSession.sharedSession()
             let task = session.dataTaskWithURL(url!, completionHandler: {data, response, error -> Void in

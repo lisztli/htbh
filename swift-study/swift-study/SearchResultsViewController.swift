@@ -10,16 +10,19 @@ import UIKit
 
 class SearchResultsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIControllerProtocol {
     @IBOutlet var appsTableView : UITableView?
-    var tableData = []
     var api: APIController?
     var imageCache = [String: UIImage]()
+    var albums = [Album]()
+    
     let kCellIdentifier: String = "SearchResultCell"
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.api = APIController(delegate: self)
         // Do any additional setup after loading the view, typically from a nib.
-        api!.searchItunesFor("jq software")
+        // show the loading icon
+        UIApplication.sharedApplication().networkActivityIndicatorVisible = true
+        api!.searchItunesFor("swift")
     }
 
     override func didReceiveMemoryWarning() {
@@ -28,23 +31,22 @@ class SearchResultsViewController: UIViewController, UITableViewDataSource, UITa
     }
 
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return tableData.count
+        println("the length of cells are: \(albums.count)")
+        return albums.count
     }
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         // let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "my-test")
         let cell: UITableViewCell = tableView.dequeueReusableCellWithIdentifier(kCellIdentifier) as UITableViewCell
         
-        let rowdata: NSDictionary = self.tableData[indexPath.row] as NSDictionary
-        
-        let cellText: String? = rowdata["trackName"] as? String
-        cell.textLabel?.text = cellText
+        let album = self.albums[indexPath.row]
+        cell.textLabel?.text = album.title
         cell.imageView?.image = UIImage(named: "Blank52")
         
-        let formattedPrice: NSString = rowdata["formattedPrice"] as NSString
+        let formattedPrice = album.price
         
         
-        let urlString: NSString = rowdata["artworkUrl60"] as NSString
+        let urlString = album.thumbnailImageURL
         
         var image = self.imageCache[urlString]
         
@@ -83,6 +85,8 @@ class SearchResultsViewController: UIViewController, UITableViewDataSource, UITa
                 if let cellToUpdate = tableView.cellForRowAtIndexPath(indexPath)
                 {
                     cellToUpdate.imageView?.image = image
+                    // if tho following line emited, the image will not be updated
+                    cellToUpdate.detailTextLabel?.text = "\(formattedPrice)  "
                 }
             })
         }
@@ -94,6 +98,8 @@ class SearchResultsViewController: UIViewController, UITableViewDataSource, UITa
     
     func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
     {
+        return
+        /*
         var rowData: NSDictionary = self.tableData[indexPath.row] as NSDictionary
         
         var name: String = rowData["trackName"] as String
@@ -103,15 +109,23 @@ class SearchResultsViewController: UIViewController, UITableViewDataSource, UITa
         alert.title = name
         alert.message = formattedPrice
         alert.addButtonWithTitle("OK")
-        alert.show()
+        alert.show()*/
     }
     
     func didReceiveAPIResults(results: NSDictionary) {
         var resultsArr: NSArray = results["results"] as NSArray
         dispatch_async(dispatch_get_main_queue(), {
-            self.tableData = resultsArr
+            self.albums = Album.albumsWithJSON(resultsArr)
             self.appsTableView?.reloadData()
+            UIApplication.sharedApplication().networkActivityIndicatorVisible = false
         })
+    }
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        var detailsViewController: DetailsViewController = segue.destinationViewController as DetailsViewController
+        var albumIndex = appsTableView!.indexPathForSelectedRow()!.row
+        var selectedAlbum = self.albums[albumIndex]
+        detailsViewController.album = selectedAlbum
     }
 }
 
