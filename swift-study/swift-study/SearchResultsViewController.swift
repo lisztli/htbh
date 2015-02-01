@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import QuartzCore
 
 class SearchResultsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, APIControllerProtocol {
     @IBOutlet var appsTableView : UITableView?
@@ -96,20 +97,11 @@ class SearchResultsViewController: UIViewController, UITableViewDataSource, UITa
         return cell
     }
     
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath)
-    {
-        return
-        /*
-        var rowData: NSDictionary = self.tableData[indexPath.row] as NSDictionary
-        
-        var name: String = rowData["trackName"] as String
-        var formattedPrice: String = rowData["formattedPrice"] as String
-        
-        var alert: UIAlertView = UIAlertView()
-        alert.title = name
-        alert.message = formattedPrice
-        alert.addButtonWithTitle("OK")
-        alert.show()*/
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        cell.layer.transform = CATransform3DMakeScale(0.1, 0.1, 1)
+        UIView.animateWithDuration(0.25, animations: {
+            cell.layer.transform = CATransform3DMakeScale(1, 1, 1)
+        })
     }
     
     func didReceiveAPIResults(results: NSDictionary) {

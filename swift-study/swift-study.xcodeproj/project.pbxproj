@@ -16,6 +16,8 @@
 		FFA8A05F1A7CC40D00BC3A4A /* APIController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFA8A05E1A7CC40D00BC3A4A /* APIController.swift */; };
 		FFBD3DC71A7DBE980028E157 /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFBD3DC61A7DBE980028E157 /* Album.swift */; };
 		FFBD3DC91A7DCB5A0028E157 /* DetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFBD3DC81A7DCB5A0028E157 /* DetailsViewController.swift */; };
+		FFBD3DCB1A7E12CA0028E157 /* Track.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFBD3DCA1A7E12CA0028E157 /* Track.swift */; };
+		FFBD3DCD1A7E17270028E157 /* TrackCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFBD3DCC1A7E17270028E157 /* TrackCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,6 +44,8 @@
 		FFA8A05E1A7CC40D00BC3A4A /* APIController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIController.swift; sourceTree = "<group>"; };
 		FFBD3DC61A7DBE980028E157 /* Album.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
 		FFBD3DC81A7DCB5A0028E157 /* DetailsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailsViewController.swift; sourceTree = "<group>"; };
+		FFBD3DCA1A7E12CA0028E157 /* Track.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Track.swift; sourceTree = "<group>"; };
+		FFBD3DCC1A7E17270028E157 /* TrackCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrackCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +92,9 @@
 				FFBD3DC61A7DBE980028E157 /* Album.swift */,
 				FFA8A05C1A7CBF1A00BC3A4A /* SearchResultsViewController.swift */,
 				FFBD3DC81A7DCB5A0028E157 /* DetailsViewController.swift */,
+				FFBD3DCA1A7E12CA0028E157 /* Track.swift */,
 				FFA8A0401A7C967D00BC3A4A /* Main.storyboard */,
+				FFBD3DCC1A7E17270028E157 /* TrackCell.swift */,
 				FFA8A0431A7C967D00BC3A4A /* Images.xcassets */,
 				FFA8A0451A7C967D00BC3A4A /* LaunchScreen.xib */,
 				FFA8A03A1A7C967D00BC3A4A /* Supporting Files */,
@@ -221,11 +227,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FFBD3DCD1A7E17270028E157 /* TrackCell.swift in Sources */,
 				FFA8A05D1A7CBF1A00BC3A4A /* SearchResultsViewController.swift in Sources */,
 				FFA8A03D1A7C967D00BC3A4A /* AppDelegate.swift in Sources */,
 				FFA8A05F1A7CC40D00BC3A4A /* APIController.swift in Sources */,
 				FFBD3DC71A7DBE980028E157 /* Album.swift in Sources */,
 				FFBD3DC91A7DCB5A0028E157 /* DetailsViewController.swift in Sources */,
+				FFBD3DCB1A7E12CA0028E157 /* Track.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
