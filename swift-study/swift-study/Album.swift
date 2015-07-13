@@ -57,6 +57,10 @@ class Album {
                         {
                             price = "$" + nf.stringFromNumber(priceFloat!)!
                         }
+                        else
+                        {
+                            price = "N/A";
+                        }
                     }
                 }
                 

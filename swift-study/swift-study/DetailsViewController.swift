@@ -62,7 +62,6 @@ class DetailsViewController: UIViewController, APIControllerProtocol, UITableVie
         mediaPlayer.play()
         if let cell = tableView.cellForRowAtIndexPath(indexPath) as? TrackCell
         {
-            println(cell.titleLabel.text)
             cell.playIcon.text = "🆗"
         }
     }
