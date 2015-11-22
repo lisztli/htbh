@@ -1,0 +1,24 @@
+digraph G
+{
+    graph [fontname = "Microsoft YaHei",fontsize=16 ranksep=1 splines=true overlap=false size="32, 16",compound=true]
+    edge [shape=box,fontname = "Microsoft YaHei",fontsize=16]
+    node [fontname = "Microsoft YaHei",fontsize=16,width="1.2" ]
+
+    dinfo[label="debug 信息"]
+    hrst[label="“家”"]
+    crst[label="“公司”"]
+
+    start -> dinfo;
+    dinfo -> cuid[label="“cuid:”", fontcolor="red"]
+    cuid -> cuid[label="“cuid:”", fontcolor="red"]
+    cuid -> hrst[label="“1”", fontcolor="red"]        
+    cuid -> crst[label="“0”", fontcolor="red"]        
+    hrst -> crst[label="“0”", fontcolor="red"]
+    hrst -> cuid[label="“cuid:”", fontcolor="red"]
+    crst -> cuid[label="“cuid:”", fontcolor="red"]
+    cuid -> Stop[label="“EOF”", fontcolor="red"]        
+    hrst -> Stop[label="“EOF”", fontcolor="red"]
+    crst -> Stop[label="“EOF”", fontcolor="red"]
+    {rank=same; hrst; crst}
+    {rank=same; start; dinfo; cuid}
+}

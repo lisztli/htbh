@@ -1,0 +1,19 @@
+digraph G
+{
+    label="热力图二期项目工作流程"
+    graph [shape=box,fontname = "Microsoft YaHei",fontsize=16 ranksep=1 splines=true overlap=false size="16, 16",compound=true]
+    edge [shape=box,fontname = "Microsoft YaHei",fontsize=16]
+    node [shape=box,fontname = "Microsoft YaHei",fontsize=16,width="1.2" ]
+    log[label="定位日志"];
+    app_request[label="APP请求"]; 
+    wpcache[label="瓦片图缓存"];
+    ETL;
+    mysql[label="定位数据存储"];
+    render[label="绘制全程热力图", style="rounded,filled", fillcolor=gray];
+
+    log -> ETL;
+    ETL -> mysql;
+    mysql -> render;
+    render -> wpcache[dir=both; color="blue"];
+    app_request -> render[dir=both];
+}

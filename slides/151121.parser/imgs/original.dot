@@ -1,0 +1,25 @@
+digraph G
+{
+    label="热力图一期项目工作流程"
+    graph [shape=box,fontname = "Microsoft YaHei",fontsize=16 ranksep=1 splines=true overlap=false size="16, 16",compound=true]
+    edge [shape=box,fontname = "Microsoft YaHei",fontsize=16]
+    node [shape=box,fontname = "Microsoft YaHei",fontsize=16,width="1.2" ]
+    log[label="定位日志"];
+    app_request[label="APP请求"]; 
+    wpcache[label="瓦片图缓存", style="rounded,filled", fillcolor=gray];
+    ETL;
+    mysql[label="定位数据存储"];
+    render[label="热力图渲染程序"];
+
+    log -> ETL;
+    ETL -> mysql;
+    mysql -> render;
+    render -> wpcache;
+    app_request -> wpcache[color="gray"; dir=both];
+    //sevent -> sup[label="用户信息",lhead=cluster_server_other];
+    //sup -> scctrl[label="指令(如果需要)",ltail=cluster_server_other];
+    //scctrl -> ccctrl[label="指令";color="blue";fontcolor="blue"];
+    //clc -> slc[label="连接";color="blue";fontcolor="blue"];
+    //cevent -> sevent[label="开机";color="blue";fontcolor="blue"];
+    //ccctrl -> cmc[label="指令",lhead=cluster_client_other;];
+}

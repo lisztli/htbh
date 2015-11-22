@@ -159,6 +159,7 @@
 		FFC79FA31B53F54B000E082D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0700;
 				LastUpgradeCheck = 0630;
 				ORGANIZATIONNAME = Llhf;
 				TargetAttributes = {
@@ -413,6 +414,7 @@
 				FFC79FCC1B53F54B000E082D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		FFC79FCD1B53F54B000E082D /* Build configuration list for PBXNativeTarget "urban_dictTests" */ = {
 			isa = XCConfigurationList;
@@ -421,6 +423,7 @@
 				FFC79FCF1B53F54B000E082D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -1,0 +1,160 @@
+\documentclass[c]{beamer}
+\usepackage{CJK}
+\usepackage{listings}
+\usetheme{Madrid}
+\renewcommand\mathfamilydefault{\rmdefault}
+\usepackage{pgfplots}
+\begin{document}
+\begin{CJK}{UTF8}{song}
+
+  \newcommand{\hm}{热力图}
+  \newcommand{\hmsnd}{热力图二期}
+  \newcommand{\hmfst}{热力图一期}
+  \newcommand{\rerd}{实时渲染}
+  \newcommand{\steam}{后台服务}
+  \newcommand{\cteam}{客户端}
+  \newcommand{\toi}{云控制}
+%%------------------------------------------
+\title[\hm{}串讲]{\hm{}串讲}
+\author[lichao06]{lichao06}
+\subtitle{\hmsnd{}\rtrd{}介绍}
+\date{\today}
+\frame{\titlepage}
+\lstset{breakatwhitespace=true,
+    language=Python,
+    basicstyle=\footnotesize\ttfamily,
+    keywordstyle=\color{red},
+    frame=lrtb,
+    numbers=right,
+    extendedchars=true}
+%%------------------------------------------
+
+\begin{frame}\frametitle{\hm{}项目简介}
+    \framesubtitle{\hm{}功能}
+    \hm{}的主要功能：
+    使用图片的方式，展示某一个时间段内，用户在空间上的分布情况
+    \begin{figure}[htbp]
+      \centering
+      \includegraphics[scale=.2]{imgs/sample.png}
+      \caption{\hm{}效果图}
+      \label{fig:hmsample}
+    \end{figure}
+\end{frame}
+
+\begin{frame}\framesubtitle{\hm{}原理}
+  \framesubtitle{heatmap.js}
+  热力图调研阶段，采用的是开源的「heatmap.js」作为绘图算法(https://github.com/pa7/heatmap.js)。
+
+  基本算法如下：
+    \begin{itemize}
+        \item 根据配置生成调色板
+        \item 申请目标区域需要占用的画布(w*h个像素点，每个点占用四个字节rgba)
+        \item 在画布上，根据数据点的座标和数值，在中心点为圆心，R为半径的圆内，绘制alpha值逐渐变小的图像
+        \item 如果画布上已经有以前绘制过的图像，将新、旧两个值进行「融合」
+        \item 全部数据点绘制完成后，使用第一步生成的调色板，根据画布上每个点的alpha值进行着色
+    \end{itemize}
+
+    \pause
+    用一张图来解释渲染过程:
+    \begin{figure}[htbp]
+      \centering
+      \includegraphics[scale=.2]{imgs/render.png}
+      \caption{\hm{}渲染过程}
+      \label{fig:hmrender}
+    \end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\hmfst{}的实现}
+    \begin{figure}[htbp]
+      \centering
+      \includegraphics[scale=.2]{imgs/original.png}
+      \caption{\hmfst{}渲染过程}
+      \label{fig:hmrender}
+    \end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\hmfst{}的实现}
+    \framesubtitle{移植、抓取和预冲}
+
+    热力图一期项目，在实现上重写了heatmap.js的实现，采用数据预冲的方式，在客户端请求之前，将所有的热力图渲染完成并写入缓存。
+    \pause
+    工作流程如下：
+    \begin{itemize}
+        \item 数据准备： 抓取定位组1/10线上服务器中，10min定位日志； 从中解析出用户位置数据，并写入mysql
+        \item 图片渲染：使用步骤一生成的数据，根据预先设置好的城市列表（及其对应的范围），使用前面提到的渲染方式，渲染出一整个城市的热力图
+        \item 图片预冲：图片渲染完成后，将整张画布切成瓦片图，转换为png之后写入redis等待客户端查询
+        \item 切换版本：全部城市的渲染、预冲结束后，会切换系统热力图版本，此后客户端读到的全部是最新数据
+    \end{itemize}
+    \pause
+    \hmfst{}存在的问题：
+    \begin{itemize}
+        \item 数据延迟过长： 经过一次改进后，数据准备、渲染和预冲需要花费大约30min的时间
+        \item 支持比例尺较少： 需要预先申请画布，17级和更大的比例尺，会发生oom
+    \end{itemize}
+\end{frame}
+
+\begin{frame}\frametitle{\hmsnd{}}
+    \begin{figure}[htbp]
+      \centering
+      \includegraphics[scale=.2]{imgs/new.png}
+      \caption{\hmsnd{}渲染过程}
+      \label{fig:hmrender}
+    \end{figure}
+\end{frame}
+
+\begin{frame}\frametitle{\hmsnd{}}
+    \framesubtitle{\rtrd{}的实现}
+    为了解决数据延迟、大比例尺下oom的问题，二期项目使用了实时渲染的问题：不需要预先渲染全部的热力图数据，只需要在客户端请求到来时，渲染对应区域的图片即可。
+
+    它从以下两个方面解决了一期存在的两个问题：
+    
+    \begin{itemize}
+      \item 延迟： 实时渲染并不需要预冲全部的图像数据，所以数据消耗基本等于下载、分析日志的时间
+      \item oom： 由于不需要一次画完整个城市的图片，可以将内存消耗控制在可控范围内
+    \end{itemize}
+
+    \hmsnd{}引入的新问题
+    \begin{itemize}
+      \item 渲染、图片转换都是cpu intensive操作，耗时较长
+      \item 由于热力图的原理，两次图片的边界，需要考虑拼接问题
+    \end{itemize}
+\end{frame}
+\begin{frame}\frametitle{\hmsnd{}}
+    \framesubtitle{\rtrd{}引入问题的解决}
+    
+    \begin{itemize}
+      \item 减少数据量
+        将全部数据，划分为边长为x的矩形，对落在全部矩形内的点计算重心，然后每个矩形只会产生一点数据。计算量随数据量减少，可以减小渲染时间
+
+      \item 扩大画布+裁剪，解决图片无法拼接的问题
+        根据前面热力图的工作方式，即「每个数据点只会影响自己周围半径R范围内的像素点」这一特性，可以计算出数据点影响到的最大半径，记为R'。
+        每次渲染部分热力图的时候,会将目标范围的左上、右下扩大R', 渲染完成后，再将边界剔除，剩下的数据即为有效数据。oom： 由于不需要一次画完整个城市的图片，可以将内存消耗控制在可控范围内
+    \end{itemize}
+\end{frame}
+
+%\begin{frame}[fragile]
+%\frametitle{WHY}
+%    \framesubtitle{逻辑与控制}
+%    如何对一个列表a里的元素加1赋值给列表b
+%    \pause
+%\begin{lstlisting}[language=Python]
+%for i in range(len(a)):
+%    b[i] = a[i] + 1
+%\end{lstlisting}
+%\pause
+%    如何对一个列表a里的元素平方后赋值给列表b
+%    \pause
+%\begin{lstlisting}[language=Python]
+%for i in range(len(a)):
+%    b[i] = a[i] * a[i]
+%\end{lstlisting}
+%\pause
+%    如何对一个列表a里的元素\textcolor{gray}{加2}赋值给列表b \\
+%    如何对一个列表a里的元素\textcolor{gray}{平方根后}赋值给列表b \\
+%    ......
+%
+%\end{frame}
+
+\end{CJK}
+\end{document}
+

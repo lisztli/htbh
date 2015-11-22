@@ -1,0 +1,123 @@
+\begin{frame}[fragile]
+  \frametitle{Remote Port Forwarding}
+  \framesubtitle{数据转发}
+
+  使用方法： \vspace{\baselineskip}
+  ssh user@host -R port:forward-host:forward-port
+  \vspace{\baselineskip}
+  
+  ``Remote Port Forwarding'' 可以在 server(\textbf{remote}) 端绑定一个端口; 任何发送到Server 上该端口的数据，都会被(\textbf{本机})转发到``forward-host:forward-port''上
+
+  \pause
+  \vspace{\baselineskip}
+  In breif：把发往Server端某个端口上的请求，经由本机，转发到目标机器上去
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Remote Port Forwarding}
+  \framesubtitle{数据转发}
+
+  e.g. \pause
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=.3]{imgs/remote-forward.png}
+  \end{figure}
+
+  \pause
+
+  让我们实际练习一下
+  
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Local Port Forwarding}
+  \framesubtitle{数据转发}
+
+  使用方法： \vspace{\baselineskip}
+  ssh user@host -L port:forward-host:forward-port
+  \vspace{\baselineskip}
+  
+  ``Local Port Forwarding'' 可以在本机(\textbf{local}) 端绑定一个端口; 任何发送到本机该端口的数据，都会被(\textbf{Server})转发到``forward-host:forward-port''上
+
+  \pause
+  \vspace{\baselineskip}
+  In breif：把发往本机某个端口上的请求，经由Server机器，转发到目标机器上去
+
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Local Port Forwarding}
+  \framesubtitle{数据转发}
+
+  e.g. \pause
+
+  \begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=.3]{imgs/local-forward.png}
+  \end{figure}
+
+  \pause
+
+  让我们实际练习一下
+  
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Dynamic Port Forwarding}
+  \framesubtitle{数据转发}
+
+  使用方法： \vspace{\baselineskip}
+  ssh -D port user@host
+  \vspace{\baselineskip}
+
+  \begin{itemize}
+  \item ``Dynamic Port Forwarding'' 会在本机端绑定一个端口
+  \item 被绑定的端口可以作为一个 socks5 代理
+  \item  任何发送到本机该端口的数据，都会被(\textbf{Server})转发
+  \item 所有的流量都是经过加密的(1024!)
+  \end{itemize}
+
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Dynamic Port Forwarding}
+  \framesubtitle{数据转发}
+  In breif：如果你有一台远程服务器，可以让你本地全部(或者某个APP)流量，经过加密传输后，从服务端网卡发出 \\
+
+  \pause
+  \vspace{\baselineskip}
+
+  让我们实际练习一下
+  
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{更多}
+  \framesubtitle{Black Magic}
+  man ssh \\
+  \vspace{\baselineskip}
+  man sshd\_config
+  \vspace{\baselineskip}
+
+  \pause
+  下面内容你可能会感兴趣:
+  \begin{itemize}
+  \item Agent Forwarding
+  \item Sshfs
+  \item Keep Alive
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{阅读更多}
+  \framesubtitle{Black Magic}
+  href: \\
+  \vspace{\baselineskip}
+  \verb|https://vimeo.com/54505525|
+\end{frame}
