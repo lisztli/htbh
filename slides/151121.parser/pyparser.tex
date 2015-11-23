@@ -75,14 +75,14 @@
   \item 在规则比较复杂的时候，对应的程序有太多分支要处理
   \item 规则很小的变化，可能导致程序变动很大
   \item 很多“可选项”（比如用户家和公司的地址可能不存在）会让程序变得很长
-  \item 混合了文本处理与“规则”本身的处理，没有响应介绍不太容易维护
+  \item 混合了文本处理与“规则”本身的处理，没有相应介绍不太容易维护
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
   \frametitle{一个 parser 介绍}
   \framesubtitle{Parser}
-  下面是另一种“文本”的处理方式： mysql 描述 ``alter database'' 的方式：
+  下面是另一种“文本”的处理方式，\\ mysql 描述 ``alter database'' 的方式：
   
   \begin{verbatim}
     ALTER {DATABASE | SCHEMA} [db_name]
@@ -131,176 +131,110 @@
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{SSH 简介}
-  \framesubtitle{基础应用}
-  shell? \pause
-
-  与 Core 相对应，提供用户使用界面 \\ \pause
+  \frametitle{日志处理}
+  \framesubtitle{Parser}
+  市面上有很多 parser 相关的工具、库，我们随便选择一种，看看使用一个 parser 怎样处理前面的程序日志，并比较一下跟普通的写的处理程序相比的优缺点。   \\
+  \pause
   \vspace{\baselineskip}
-  SSH
-  \begin{itemize}
-  \item 全称是\textbf{Secure Shell}(VS. Telnet)
-  \item 为远程登录会话和其他网络服务提供安全性的协议
-  \item 对所有传输的数据进行加密
-  \item 创建在应用层和传输层基础上的安全协议(git, scp, rsync, sftp)
-  \item 为计算机上的Shell提供安全的传输和使用环境
-  \end{itemize}
+  我们选取了 Python 的一个库： pyparsing
+  \verb|http://pyparsing.wikispaces.com/|
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{使用与配置}
-  \framesubtitle{基础应用}
-  需要在 Server 端运行 \textbf{sshd}
-  \begin{itemize}
-  \item \verb|openssh-server|
-  \item 默认运行在端口 22
-  \item 可能使用跳板机
-  \item 可能禁止密码登录
-  \item 可能禁止 \textsf{root} 登录
-  \item 有定制化的登录提示
-  \end{itemize}
-\end{frame}
-
-
-\begin{frame}[fragile]
-  \frametitle{使用与配置}
-  \framesubtitle{基础应用}
+  \frametitle{日志处理}
+  \framesubtitle{Parser}
+  那这样一份日志：
   \begin{figure}[htbp]
     \centering
-    \includegraphics[scale=.4]{imgs/ssh-splash.png}
-    \caption{SSH welcome message}
-    \label{fig:ssh-splash}
+    \includegraphics[scale=.4]{imgs/log_state_trans.png}
+    \caption{日志状态机}
+    \label{fig:loc-trans}
   \end{figure}
 \end{frame}
 
+\begin{frame}[fragile]
+  \frametitle{日志处理}
+  \framesubtitle{Parser}
+  在 Python 下是这样描述的：
+  %% \begin{lstlisting}[language=Python]
+  \begin{verbatim}
+    ld, hld, cld = 'cuid:', '1', '0'
+
+    loc_coor = Regex(r'\d+(\.\d*)?([eE]\d+)?')
+    loc_rst = loc_coor + loc_coor
+    home_rst = Group(hld + loc_rst)('expression')
+    comp_rst = Group(cld + loc_rst)('expression')
+    rst = Group(ld + Regex(r'[^ ]*') + Optional(home_rst) + \
+          Optional(comp_rst))('expression')
+    
+    rsts = OneOrMore(rst)
+    ldline = Group(restOfLine)('expression')
+    rst_str = ldline + rsts
+  \end{verbatim}
+  
+\end{frame}
+
 
 \begin{frame}[fragile]
-  \frametitle{使用与配置}
-  \framesubtitle{基础应用}
+  \frametitle{日志处理}
+  \framesubtitle{Parser}
+  描述完成后，可以按照下面的方式来使用：
 
-  \textbf{ssh user@host}
-
+  \begin{verbatim}
+    with open('src.txt') as  f:
+    c = f.read()
+    rst = rst_str.parseString(c)
+    for i in  rst:
+       print i
+  \end{verbatim}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{进阶配置}
-  \framesubtitle{基础应用}
-  使用 ``ssh user@host'' 会遇到诸多不便，例如:
+  \frametitle{日志处理}
+  \framesubtitle{Parser}
+  它生成的结果，是这样的：
+
+  \begin{verbatim}
+    with open('src.txt') as  f:
+    c = f.read()
+    rst = rst_str.parseString(c)
+    for i in  rst:
+       print i
+  \end{verbatim}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Pros and Cons}
+  \framesubtitle{Parser}
+  
+  使用一些 parser 工具，可以在下面几个方面提高工作效率：
+  
   \begin{itemize}
-  \item 不想每次输入密码
-  \item 服务器太多，记不住 IP、域名
-  \item 由于服务器配置不同，导致用户名、端口不一致
-  \item GUI 界面不能使用
+  \item 将工作的注意力由原始的文本处理，迁移到抽象后的业务中来，摆脱这些繁琐的细节, 这一点在日志格式复杂的时候，显得尤其重要
+  \item 日志的格式发生某种变化的时候，可以通过修改日志定义部分的实现完成适配，不会影响程序其他部分
+    \item 与手写的日志处理程序相比，代码更清晰，程序也更容易维护
+  \end{itemize}
+
+  当然，parser 也会(在某些场景下) 造成如下困扰：
+  
+  \begin{itemize}
+  \item 有一些学习成本
+    \item 根据 parser 本身的实现、文本格式的复杂程度，性能跟裸的处理程序相比可能会有一定下降
   \end{itemize}
 \end{frame}
 
 \begin{frame}[fragile]
-  \frametitle{密钥登录}
-  \framesubtitle{基础应用}
-  使用密钥登录的方式，可以避开每次输入密码的烦恼，也更加安全
+  \frametitle{Pros and Cons}
+  \framesubtitle{Parser}
+  
+  根据我自身的体会，使用这类工具，可以大大节省开发的时间，同时降低维护成本，如果你的程序的瓶颈不是在日志处理这一部分，非常值得在工作中使用 parser。\\
+  下面列举一些常用到的工具以及对应的语言：
+  
   \begin{itemize}
-  \item 使用``ssh-keygen -t rsa''生成一对密钥
-  \item 将公钥``id\_rsa.pub''写入Server 端``\~/.ssh/authorized\_keys''
-  \item 修改私钥``id\_rsa'' 的权限
-  \item ``ssh user@host''
+  \item pyparsing (Python)
+  \item Lex (C)
+  \item XXLex(XX代表你使用的语言，比如 Jlex)
   \end{itemize}
 \end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{\~/.ssh/config}
-  \framesubtitle{基础应用}
-  使用密钥登录之后，只是（可能）免去了输入密码的烦恼 \\
-  其他问题怎么解决呢？ \\
-  \vspace{\baselineskip}
-  \pause
-  答案在``\~/.ssh/config''中
-  \begin{lstlisting}[language=bash]
-    Host vm
-        HostName 127.0.0.1
-        Port 28022
-    Host kaikai
-        HostName 106.185.43.198
-        User lichao
-    Host *
-        ControlMaster auto
-        ControlPath ~/.ssh/%h-%p-%r
-        ControlPersist yes
-  \end{lstlisting}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{X11}
-  \framesubtitle{基础应用}
-
-  可以使用 X11 Forwarding 来使用服务器上 GUI 程序
-  \begin{itemize}
-  \item 服务端开启``X11Forwarding''
-  \item 登录用户在使用X11(设置``DISPLAY''环境变量)
-  \item ssh -X
-  \item 网络足够快
-  \end{itemize}
-\end{frame}
-
-
-\begin{frame}[fragile]
-  \frametitle{Remote Command}
-  \framesubtitle{基础应用}
-
-  有时候我们需要在远程机器上执行一个指令后退出(并且希望执行的结果输出到本地终端上), 可以这样使用 SSH：
-
-  \vspace{\baselineskip}
-  ssh user@host ``command''
-  \vspace{\baselineskip}
-
-  \pause
-  比如去服务器上查找某一个特定的 logid, 可以在多台机器上执行：
-  \vspace{\baselineskip}
-  ssh lichao06@tc-map-mobile00.tc ``cat log \textbar{} grep \$logid''
-
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Force Remote Command}
-  \framesubtitle{基础应用}
-
-  \textbf{同样可以为每个用户单独指定一个成功登录时的指令} \pause
-
-  在``\~/.ssh/authorized\_keys''的公钥前，可以为用户增加不同的设置 \pause \\
-  command=``show me the money'' 可以指定用户登录时执行的命令 \pause 
-  \vspace{\baselineskip}
-
-  例如:
-  \begin{figure}[htbp]
-    \centering
-    \includegraphics[scale=.4]{imgs/remote-cmd.png}
-    \label{fig:ssh-remote-cmd}
-  \end{figure}
-\end{frame}
-
-
-\begin{frame}[fragile]
-  \frametitle{Force Remote Command}
-  \framesubtitle{基础应用}
-
-  作用是? \\
-  \vspace{\baselineskip}
-  \pause
-
-  e.g.
-
-  当你执行： \\
-  \vspace{\baselineskip}
-  \verb|git clone git@github.com:lisztli/homework.git|  \\
-  \vspace{\baselineskip}
-  的时候，其实是执行了: \\
-
-  \vspace{\baselineskip}
-  \verb|# ssh git@github.com -- git-receive-pack lisztli/homework.git|\\
-  \pause
-
-  \vspace{\baselineskip}
-  GitHub 为每个用户的公钥增加了一个``command=xxx''，确保用户可以执行的指令限制在一个白名单之内
-\end{frame}
-
-
 
